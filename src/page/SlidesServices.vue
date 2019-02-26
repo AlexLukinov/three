@@ -102,6 +102,8 @@
                 } else {
                     this.currentNumber = 0
                 }
+
+                this.moveCamera('next');
             },
             prev: function () {
                 if (this.currentNumber > 0) {
@@ -109,6 +111,25 @@
                 } else {
                     this.currentNumber = this.data.slides.length - 1
                 }
+
+                this.moveCamera('prev');
+            },
+            moveCamera: function (step) {
+                let offsetPosition = 0;
+                let offsetPositionStep = 0.01;
+                let offsetLength = 3;
+
+                setInterval(() => {
+                    offsetPosition += offsetPositionStep;
+
+                    if (offsetPosition < offsetLength) {
+                        if (step === 'next') {
+                            this.camera.position.x += offsetPositionStep;
+                        } else {
+                            this.camera.position.x -= offsetPositionStep;
+                        }
+                    }
+                }, 10);
             },
             loadMyModel() {
                 this.scene = new THREE.Scene();
@@ -226,78 +247,78 @@
                     });
                 });
             },
-            loadNormalModel() {
-                let texture = new THREE.Texture();
-
-                let imageLoader = new THREE.ImageLoader();
-
-                imageLoader.load('/Textures/lotus_textures/lotus_petal_diffuse.jpg', function(image) {
-                    texture.image = image;
-                    texture.needsUpdate = true;
-                });
-                // imageLoader.load('/Textures/lotus_textures/lotus_petal_bump.jpg', function(image) {
-                //     texture.image = image;
-                //     texture.needsUpdate = true;
-                // });
-                // imageLoader.load('/Textures/lotus_textures/lotus_petal_glossiness.jpg', function(image) {
-                //     texture.image = image;
-                //     texture.needsUpdate = true;
-                // });
-
-                let loader = new THREE.OBJLoader();
-
-                loader.load('lotus_OBJ_high.obj', object => {
-                    object.traverse(child => {
-                        if (child instanceof THREE.Mesh) {
-                            child.material.map = texture;
-                        }
-                    });
-
-                    this.objects.push(object);
-
-                    this.objects.forEach(object => {
-                        this.scene.add(object)
-                    })
-                });
-            },
-            loadPointsModel() {
-                let loader = new THREE.OBJLoader();
-
-                loader.load('lotus_OBJ_high.obj', object => {
-                    let material = new THREE.PointsMaterial({color: 0xff0ff, size: 0.01});
-
-                    object.traverse(child => {
-                        if (child instanceof THREE.Mesh) {
-                            this.objects.push(new THREE.Points(child.geometry, material));
-                        }
-                    });
-
-                    this.objects.forEach(object => {
-                        this.scene.add(object)
-                    })
-                });
-            },
-            loadMeshModel() {
-                var loader = new THREE.OBJLoader();
-
-                loader.load('lotus_OBJ_high.obj', object => {
-                    let modifier = new THREE.SimplifyModifier();
-
-                    let material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xfb9fbc});
-
-                    object.traverse(child => {
-                        this.objects.push(child);
-                    });
-
-                    this.objects.forEach(item => {
-                        if (item instanceof THREE.Mesh) {
-                            this.scene.add(this.makeSimplifiedMesh(item, material, modifier));
-                        }
-                    });
-
-                    object.position.y = 0;
-                });
-            },
+            // loadNormalModel() {
+            //     let texture = new THREE.Texture();
+            //
+            //     let imageLoader = new THREE.ImageLoader();
+            //
+            //     imageLoader.load('/Textures/lotus_textures/lotus_petal_diffuse.jpg', function(image) {
+            //         texture.image = image;
+            //         texture.needsUpdate = true;
+            //     });
+            //     // imageLoader.load('/Textures/lotus_textures/lotus_petal_bump.jpg', function(image) {
+            //     //     texture.image = image;
+            //     //     texture.needsUpdate = true;
+            //     // });
+            //     // imageLoader.load('/Textures/lotus_textures/lotus_petal_glossiness.jpg', function(image) {
+            //     //     texture.image = image;
+            //     //     texture.needsUpdate = true;
+            //     // });
+            //
+            //     let loader = new THREE.OBJLoader();
+            //
+            //     loader.load('lotus_OBJ_high.obj', object => {
+            //         object.traverse(child => {
+            //             if (child instanceof THREE.Mesh) {
+            //                 child.material.map = texture;
+            //             }
+            //         });
+            //
+            //         this.objects.push(object);
+            //
+            //         this.objects.forEach(object => {
+            //             this.scene.add(object)
+            //         })
+            //     });
+            // },
+            // loadPointsModel() {
+            //     let loader = new THREE.OBJLoader();
+            //
+            //     loader.load('lotus_OBJ_high.obj', object => {
+            //         let material = new THREE.PointsMaterial({color: 0xff0ff, size: 0.01});
+            //
+            //         object.traverse(child => {
+            //             if (child instanceof THREE.Mesh) {
+            //                 this.objects.push(new THREE.Points(child.geometry, material));
+            //             }
+            //         });
+            //
+            //         this.objects.forEach(object => {
+            //             this.scene.add(object)
+            //         })
+            //     });
+            // },
+            // loadMeshModel() {
+            //     var loader = new THREE.OBJLoader();
+            //
+            //     loader.load('lotus_OBJ_high.obj', object => {
+            //         let modifier = new THREE.SimplifyModifier();
+            //
+            //         let material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xfb9fbc});
+            //
+            //         object.traverse(child => {
+            //             this.objects.push(child);
+            //         });
+            //
+            //         this.objects.forEach(item => {
+            //             if (item instanceof THREE.Mesh) {
+            //                 this.scene.add(this.makeSimplifiedMesh(item, material, modifier));
+            //             }
+            //         });
+            //
+            //         object.position.y = 0;
+            //     });
+            // },
             makeSimplifiedMesh(mesh, material, modifier) {
                 mesh.material = material;
                 mesh.material.flatShading = true;
